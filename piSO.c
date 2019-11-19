@@ -17,7 +17,8 @@ int main(int argc, char * argv[]) {
     //CREACION E INICIALIZACION DE VARIABLES
     //###############################
     int pid;
-    int elementos = /*((int)argv[1])+1*/7;
+    long arg = strtol(argv[1], NULL, 10);
+    int elementos = (int) arg + 2;
     int *pid_h = malloc(sizeof(int) * elementos);
     srand(time(NULL));
     struct sigaction funcionSommss, funcionJefess;
@@ -136,7 +137,7 @@ int main(int argc, char * argv[]) {
                   for(int i=0; i<elementos; i++){
                       kill(*(pid_h+i), SIGKILL);
                   }
-                  printf("\n \x1b[31m -- RESTAURANTE CERRADO --  \n");
+                  printf("\n -- RESTAURANTE CERRADO --  \n\n");
                   //printf("Todos los procesos muertos, fin programa");
                   //FIN programa
                   return 0;
@@ -175,7 +176,7 @@ int main(int argc, char * argv[]) {
         if(si==0){
           printf("- El chef ve que no hay ningún plato preparado\n- Se decepciona con el trabajo de sus pinches\n");
           printf("- Decide echar a todos del restaurante y cerrarlo\n");
-          printf("\n \x1b[31m -- RESTAURANTE CERRADO --  \n");
+          printf("\n -- RESTAURANTE CERRADO --  \n\n");
           //printf("ESTO ES INDIGNANTE! NINGUN PLATO BIEN HECHO\n TODOS DESPEDIDOS\n CIERRO\n");
           for(int i=0; i<elementos; i++){
                kill(*(pid_h+i), SIGKILL);
@@ -206,7 +207,7 @@ int main(int argc, char * argv[]) {
             kill(*(pid_h+1), SIGKILL); //MATAMOS AL JEFE DE SALA
         printf("- Cuando todo está listo, el chef procede a abrir el restaurante al público\n");
         //printf("El jefe de sala ya ha terminado\n");
-        printf("\n \x1b[34m  -- RESTAURANTE ABIERTO --  \n");
+        printf("\n  -- RESTAURANTE ABIERTO --  \n\n");
         //printf("\nABRIMOS EL RESTAURANTE\n\n");
 
     }
