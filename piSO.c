@@ -17,11 +17,11 @@ int main(int argc, char * argv[]) {
     //CREACION E INICIALIZACION DE VARIABLES
     //###############################
     int pid;
-    long arg = strtol(argv[1], NULL, 10);
+    int arg = strtoq(argv[1], NULL, 10);
     int elementos = (int) arg + 2;
     int *pid_h = malloc(sizeof(int) * elementos);
     srand(getpid());
-    struct sigaction funcionSommss, funcionJefess;
+    struct sigaction funcionSommss = {0}, funcionJefess = {0};
     pid_t hpid_chef;
     int statusChef;
 
@@ -37,10 +37,7 @@ int main(int argc, char * argv[]) {
         }else if(pid==0){ //CODIGO PARA TODOS LOS HIJOS
           switch(i){
               case 0: //SOMMELIER
-                  //kill(getpid(), SIGSTOP);
-                  //srand(getpid());
                   funcionSommss.sa_handler=funcionSomm;
-                  //printf("Sommelier despierto\n");
                   //EL CHEF ENVIA QUE NO HAY VINO
 	                if(-1==sigaction(SIGUSR1, &funcionSommss, NULL)){
                       perror("Llamada a signal.\n");
@@ -54,9 +51,7 @@ int main(int argc, char * argv[]) {
                   pause();
         	      break;
               case 1:
-                  //kill(getpid(), SIGSTOP);
                   funcionJefess.sa_handler=funcionJefe;
-                  //printf("Jefe de sala despierto\n");
                   //EL CHEF ENVIA QUE NO HAY VINO
                   if(-1==sigaction(SIGUSR1, &funcionJefess, NULL)){
                       perror("Llamada a signal.\n");
@@ -67,14 +62,11 @@ int main(int argc, char * argv[]) {
               default: //PINCHES DE COCINA
                   kill(getpid(), SIGSTOP);
                   srand(getpid());
-                  //pause();
-                  //printf("Pprintf("El mozo se pone en pause\n");     
-    			  //pause();inche %d despierto\n", i-1);
                   printf("\t- El pinche %d se pone a trabajar en un plato\n", i-1);
                   int temp = (rand()%3)+3;
                   sleep(temp);
                   int res = rand()%2;
-                  //printf("El pinche %d ha devuelto un: %d\n", i-1, res);
+                  
                   if(res == 1){
                       printf("\t- El pinche %d ha completado el plato\n", i-1);
                   }else{
@@ -93,35 +85,28 @@ int main(int argc, char * argv[]) {
     if(pid!=0){ //CODIGO PRINCIPAL DEL CHEF
 
         printf("- El chef entra en el restaurante para iniciar una jornada de trabajo\n");
-        //printf("Durmiendo los 3 segundos...\n\n");
+        
         printf("- El chef empieza a organizar la cocina\n");
         sleep(3); //El chef espera 3 segundos en los que se dedica a organizar la cocina
         srand(getpid());
         int aleat1 = rand()%2;
-        //kill(*pid_h, SIGCONT);
-        //sleep(2);
+        
         if(aleat1==0){
             //FALTAN INGREDIENTES
-            //printf("No hay ingredientes\n");
             printf("- El chef acaba de organizar la cocina, pero se da cuenta de que faltan ingredientes\n");
             kill(* (pid_h+0), SIGUSR1); //SIGUSR1 - Despertamos al sommelier
             printf("- El chef manda al sommelier a por ingredientes\n");
         }else{
             //FALTA VINO
             printf("- El chef acaba de organizar la cocina, pero se da cuenta de que falta vino\n");
-            //printf("No hay vino\n");
             kill(* (pid_h+0), SIGUSR2); //SIGUSR2 - Despertamos al sommelier
             printf("- El chef manda al sommelier a por vino\n");
         }
         printf("- Mientras el chef espera la respuesta del sommelier\n");
-        //kill(getpid(), SIGSTOP); //NOS PARAMOS PARA DEJAR ACTUAR AL SOMMELIER
-        //pause();
-        //sleep(10);
-        //pause();
-        //printf("Esperando para leer\n");
+
         hpid_chef = wait(&statusChef);
         int salida = WEXITSTATUS(statusChef); //LEEMOS LO QUE NOS DICE EL SOMMELIER
-        //kill(* (pid_h), SIGKILL); //MATAMOS AL SOMMELIER
+     
         printf("El sommelier devuelve: %d\n", salida); //IMPRIMO LO QUE ME LLEGA DEL SOMMELIER
 
         //#########################################
@@ -130,23 +115,19 @@ int main(int argc, char * argv[]) {
 
         switch(salida){
             case 1:
-                  //printf("ESTO ES INDIGNANTE! NO HAY VINO\n TODOS DESPEDIDOS\n CIERRO\n");
                   printf("- El chef considera que la falta de vino es un problema grande\n- Decide echar a todos del restaurante y cerrarlo\n");
                   for(int i=0; i<elementos; i++){
                       kill(*(pid_h+i), SIGKILL);
                   }
                   printf("\n -- RESTAURANTE CERRADO --  \n\n");
-                  //printf("Todos los procesos muertos, fin programa");
                   //FIN programa
                   return 0;
                   //FIN programa
                   break;
             case 2:
-                  //printf("Chicos, faltan algunos ingredientes - dice el chef\n");
-            printf("- El chef sabe que faltan algunos ingredientes, pero eso no le detiene\n");
+                 printf("- El chef sabe que faltan algunos ingredientes, pero eso no le detiene\n");
             default:
                   printf("- El chef pone a trabajar a todos los pinches en la cocina\n");
-                  //printf("TODOSLOS PINCHES A TRABAJAR!!\n");
         }
 
         //#########################################
@@ -175,17 +156,14 @@ int main(int argc, char * argv[]) {
           printf("- El chef ve que no hay ningún plato preparado\n- Se decepciona con el trabajo de sus pinches\n");
           printf("- Decide echar a todos del restaurante y cerrarlo\n");
           printf("\n -- RESTAURANTE CERRADO --  \n\n");
-          //printf("ESTO ES INDIGNANTE! NINGUN PLATO BIEN HECHO\n TODOS DESPEDIDOS\n CIERRO\n");
           for(int i=0; i<elementos; i++){
                kill(*(pid_h+i), SIGKILL);
           }
-          //printf("Todos los procesos muertos, fin programa");
           //FIN programa
           return 0;
           //FIN programa
         }else if(no==0){
           printf("- El chef está orgulloso del trabajo de sus pinches de cocina\n- Le dará un aumento a todos ellos por el trabajo realizado\n");
-          //printf("Vale, JEFE DE SALA!, TE TOCA\n");
         }else{
           printf("- El chef observa el trabajo de sus pinches, y aunque no le disgusta (Platos completados = %d - Platos no completados = %d), no es lo que más gracia le hace\n", si, no);
         }
@@ -198,24 +176,18 @@ int main(int argc, char * argv[]) {
         kill(*(pid_h+1), SIGCONT);
         sleep(1);
         kill(*(pid_h+1), SIGUSR1); //SIGUSR1 - Despertamos al jefe de sala
-        //printf("Esperando a que el jefe organice\n");
         hpid_chef = wait(&statusChef);
         salida = WEXITSTATUS(statusChef); //LEEMOS LO QUE NOS DICE EL JEFE DE SALA
         if(salida == 1)
             kill(*(pid_h+1), SIGKILL); //MATAMOS AL JEFE DE SALA
         printf("- Cuando todo está listo, el chef procede a abrir el restaurante al público\n");
-        //printf("El jefe de sala ya ha terminado\n");
         printf("\n  -- RESTAURANTE ABIERTO --  \n\n");
-        //printf("\nABRIMOS EL RESTAURANTE\n\n");
-
     }
   return 0;
 }
 
 void funcionSomm(int sig){
-  //printf("Funcion manejadora del sommelier\n"); //DEBUGGER PARA SABER QUE LLEGO AQUI
-
-  struct sigaction funcionMozoss;
+  struct sigaction funcionMozoss = {0};
   pid_t hpid_som;
   int statusSom;
   int pid_mozo = fork();
