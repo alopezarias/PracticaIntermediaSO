@@ -97,10 +97,9 @@ int main(int argc, char * argv[]) {
     if(pid!=0){ //CODIGO PRINCIPAL DEL CHEF
 
         printf("- El chef entra en el restaurante para iniciar una jornada de trabajo\n");
-        
         printf("- El chef empieza a organizar la cocina\n");
         sleep(3); //El chef espera 3 segundos en los que se dedica a organizar la cocina
-        srand(time(NULL));
+        srand(getpid()*getpid()+rand()%100);
         int aleat1 = rand()%2;
         
         if(aleat1==0){
