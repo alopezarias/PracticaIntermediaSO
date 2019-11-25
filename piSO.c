@@ -12,13 +12,26 @@ void funcionJefe(int);
 
 int main(int argc, char * argv[]) {
     
+    
+    if(argv[2] != NULL){
+      printf("\x1b[31m Los pinches no se han introducido de forma correcta \x1b[0m\n");
+      return 0;
+    }
+    int num = atoi(argv[1]);
+
+    if(num<=0){
+      printf("\x1b[31m No se ha introducido el numero de forma correcta \x1b[0m\n");
+      return 0;
+    }
+
+
     printf("\n\n \x1b[33m ASI ES UN DIA NORMAL EN EL RESTAURANTE SAL MARINA, EN SANTA EULALIA DEL RIO, IBIZA \x1b[0m \n\n");
     //###############################
     //CREACION E INICIALIZACION DE VARIABLES
     //###############################
     int pid;
-    int arg = strtoq(argv[1], NULL, 10);
-    int elementos = (int) arg + 2;
+    //int arg = strtoq(argv[1], NULL, 10);
+    int elementos = num + 2;
     int *pid_h = malloc(sizeof(int) * elementos);
     struct sigaction funcionSommss = {0}, funcionJefess = {0};
     pid_t hpid_chef;
