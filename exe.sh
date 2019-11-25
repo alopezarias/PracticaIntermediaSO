@@ -7,7 +7,8 @@ function mostrarCodigo()
 
 function compilar() 
 {	
-	gcc piSO.c
+	gcc -o programa piSO.c
+	echo -e "\e[32mCodigo complilado \e[0m\n"
 }
 
 function ejecutar() 
@@ -20,13 +21,14 @@ function ejecutar()
 
 		if test $num -le 0
 		then
-			echo -e "El numero de pinches debe ser mayor que 0"
+			echo -e "\e[31m El numero de pinches debe ser mayor que 0 \e[0m"
 		else
 			num2=0
 		fi
 	done
 	echo -e "\n\n RESTAURANTE CON $num PINCHES"
-	./a.out $num
+	clear
+	./programa $num
 }
 
 ##############################################################
@@ -35,13 +37,13 @@ function ejecutar()
 
 while true
 do
-	echo  -e "---------------------------------"
+	echo  -e "\e[33m---------------------------------"
 	echo  -e "|       MENU RESTAURANTE        |"
 	echo  -e "---------------------------------\n"
 	echo  -e "\t1.- Mostrar Código"
 	echo  -e "\t2.- Compilar Código"
 	echo  -e "\t3.- Ejecutar Código"
-	echo  -e "\t4.- Salir del Menú\n"
+	echo  -e "\t4.- Salir del Menú \e[0m\n"
 	read -p "Selecciona la acción que deseas realizar: " option
 
 	case $option in
@@ -49,8 +51,6 @@ do
 		2) echo -e "\nCompilando Código\n";compilar;;
 		3) echo -e "\nEjecutando Código\n";ejecutar;;
 		4) echo  -e "Has seleccionado salir\n";exit 0;;
-		5) subl piSO.c;;
-		6) subl exe.sh;;
 		*) echo -e "Opcion Incorrecta"
 	esac
 done

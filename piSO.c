@@ -12,7 +12,7 @@ void funcionJefe(int);
 
 int main(int argc, char * argv[]) {
     
-    printf("\n\n ASI ES UN DIA NORMAL EN EL RESTAURANTE SAL MARINA, EN SANTA EULALIA DEL RIO, IBIZA\n\n");
+    printf("\n\n \x1b[33m ASI ES UN DIA NORMAL EN EL RESTAURANTE SAL MARINA, EN SANTA EULALIA DEL RIO, IBIZA \x1b[0m \n\n");
     //###############################
     //CREACION E INICIALIZACION DE VARIABLES
     //###############################
@@ -20,7 +20,6 @@ int main(int argc, char * argv[]) {
     int arg = strtoq(argv[1], NULL, 10);
     int elementos = (int) arg + 2;
     int *pid_h = malloc(sizeof(int) * elementos);
-    srand(getpid());
     struct sigaction funcionSommss = {0}, funcionJefess = {0};
     pid_t hpid_chef;
     int statusChef;
@@ -32,7 +31,7 @@ int main(int argc, char * argv[]) {
         pid = fork();
         srand(getpid()+i);
         if(pid==-1){ //CUANDO DETECTAMOS ALGUN ERROR
-          perror("ERROR CREANDO ALGUNO DE LOS PROCESOS HIJOS\n");
+          perror("\x1b[31m ERROR CREANDO ALGUNO DE LOS PROCESOS HIJOS \x1b[0m\n");
 
         }else if(pid==0){ //CODIGO PARA TODOS LOS HIJOS
           switch(i){
@@ -40,12 +39,12 @@ int main(int argc, char * argv[]) {
                   funcionSommss.sa_handler=funcionSomm;
                   //EL CHEF ENVIA QUE NO HAY VINO
 	                if(-1==sigaction(SIGUSR1, &funcionSommss, NULL)){
-                      perror("Llamada a signal.\n");
+                      perror("\x1b[31m SOMMELIER ERROR: SEÑAL SIGUSR1 \x1b[0m\n");
                       exit(-1);
                 	}
                   //EL CHEF ENVIA QUE NO HAY INGREDIENTES
                   if(-1==sigaction(SIGUSR2, &funcionSommss, NULL)){
-                      perror("Llamada a signal.\n");
+                      perror("\x1b[31m SOMMELIER ERROR: SEÑAL SIGUSR2 \x1b[0m\n");
                       exit(-1);
                   }
                   pause();
@@ -54,23 +53,23 @@ int main(int argc, char * argv[]) {
                   funcionJefess.sa_handler=funcionJefe;
                   //EL CHEF ENVIA QUE NO HAY VINO
                   if(-1==sigaction(SIGUSR1, &funcionJefess, NULL)){
-                      perror("Llamada a signal.\n");
+                      perror("\x1b[31m ERROR JEFE DE SALA: SEÑAL SIGUSR1 \x1b[Om\n");
                       exit(-1);
                   }
                   pause();
                   break;
               default: //PINCHES DE COCINA
                   kill(getpid(), SIGSTOP);
-                  srand(getpid());
+                  srand(getpid()+(i*i));
                   printf("\t- El pinche %d se pone a trabajar en un plato\n", i-1);
                   int temp = (rand()%3)+3;
                   sleep(temp);
                   int res = rand()%2;
                   
                   if(res == 1){
-                      printf("\t- El pinche %d ha completado el plato\n", i-1);
+                      printf("\t- \x1b[32mEl pinche %d ha completado el plato \x1b[0m\n", i-1);
                   }else{
-                      printf("\t- El pinche %d no ha completado el plato\n", i-1);
+                      printf("\t- \x1b[31mEl pinche %d no ha completado el plato \x1b[0m\n", i-1);
                   }
                   exit(res);
                   kill(getpid(), SIGKILL); //Por si acaso el proceso no esta muerto, lo mato
@@ -88,7 +87,7 @@ int main(int argc, char * argv[]) {
         
         printf("- El chef empieza a organizar la cocina\n");
         sleep(3); //El chef espera 3 segundos en los que se dedica a organizar la cocina
-        srand(getpid());
+        srand(time(NULL));
         int aleat1 = rand()%2;
         
         if(aleat1==0){
@@ -107,7 +106,7 @@ int main(int argc, char * argv[]) {
         hpid_chef = wait(&statusChef);
         int salida = WEXITSTATUS(statusChef); //LEEMOS LO QUE NOS DICE EL SOMMELIER
      
-        printf("El sommelier devuelve: %d\n", salida); //IMPRIMO LO QUE ME LLEGA DEL SOMMELIER
+        //printf("El sommelier devuelve: %d\n", salida); //IMPRIMO LO QUE ME LLEGA DEL SOMMELIER
 
         //#########################################
         //en funcion de lo que nos diga el somm, vamos a:
@@ -119,7 +118,7 @@ int main(int argc, char * argv[]) {
                   for(int i=0; i<elementos; i++){
                       kill(*(pid_h+i), SIGKILL);
                   }
-                  printf("\n -- RESTAURANTE CERRADO --  \n\n");
+                  printf("\n\x1b[31m -- RESTAURANTE CERRADO -- \x1b[0m \n\n");
                   //FIN programa
                   return 0;
                   //FIN programa
@@ -155,7 +154,7 @@ int main(int argc, char * argv[]) {
         if(si==0){
           printf("- El chef ve que no hay ningún plato preparado\n- Se decepciona con el trabajo de sus pinches\n");
           printf("- Decide echar a todos del restaurante y cerrarlo\n");
-          printf("\n -- RESTAURANTE CERRADO --  \n\n");
+          printf("\n \x1b[31m-- RESTAURANTE CERRADO -- \x1b[0m \n\n");
           for(int i=0; i<elementos; i++){
                kill(*(pid_h+i), SIGKILL);
           }
@@ -165,7 +164,7 @@ int main(int argc, char * argv[]) {
         }else if(no==0){
           printf("- El chef está orgulloso del trabajo de sus pinches de cocina\n- Le dará un aumento a todos ellos por el trabajo realizado\n");
         }else{
-          printf("- El chef observa el trabajo de sus pinches, y aunque no le disgusta (Platos completados = %d - Platos no completados = %d), no es lo que más gracia le hace\n", si, no);
+          printf("- El chef observa el trabajo de sus pinches, y aunque no le disgusta (\x1b[32m Platos completados = %d \x1b[0m - \x1b[31m Platos no completados = %d \x1b[0m), no es lo que más gracia le hace\n", si, no);
         }
         printf("- El chef manda al jefe de sala a colocar las mesas\n");
 
@@ -181,7 +180,7 @@ int main(int argc, char * argv[]) {
         if(salida == 1)
             kill(*(pid_h+1), SIGKILL); //MATAMOS AL JEFE DE SALA
         printf("- Cuando todo está listo, el chef procede a abrir el restaurante al público\n");
-        printf("\n  -- RESTAURANTE ABIERTO --  \n\n");
+        printf("\n \x1b[32m -- RESTAURANTE ABIERTO -- \x1b[0m \n\n");
     }
   return 0;
 }
@@ -193,19 +192,17 @@ void funcionSomm(int sig){
   int pid_mozo = fork();
 
   if(pid_mozo == -1){
-    perror("Ha habido un error al crear al mozo\n");
+    perror("\x1b[31m Ha habido un error al crear al mozo \x1b[0m\n");
   }else if(pid_mozo == 0){
     funcionMozoss.sa_handler=funcionMozo;
     
-    printf("El mozo ya esta despierto\n");           
+    //printf("El mozo ya esta despierto\n");           
 
     if(-1==sigaction(SIGPIPE, &funcionMozoss, NULL)){
-       perror("Llamada a signal.\n");
+       perror("\x1b[31m MOZO ERROR: SEÑAL SIGPIPE \x1b[0m\n");
        exit(-1);
-    }
-    printf("El mozo se pone en pause\n");     
-    pause();
-    printf("El mozo ha pasado del pause\n");           
+    }    
+    pause();          
 
   }else{
     sleep(3);//LE DAMOS TIEMPO A DESPEREZARSE
@@ -215,14 +212,14 @@ void funcionSomm(int sig){
   if(pid_mozo!=0){
   	printf("\t- El sommelier llama al mozo para que vaya a buscarlo\n");
     sleep(3);//LE DAMOS TIEMPO A DESPEREZARSE
-    printf("Envio del sigpipe\n");
+    //printf("Envio del sigpipe\n");
     kill(pid_mozo, SIGPIPE); //LE MANDAMOS A POR ALGO
     
     printf("\t- El sommelier espera la respuesta del mozo\n"); //LEEMOS LO QUE NOS MANDA EL MOZO
     hpid_som = wait(&statusSom);
     int resultado = WEXITSTATUS(statusSom); //LEEMOS LO QUE NOS DICE EL SOMMELIER
         
-    printf("El mozo ha devuelto un %d", resultado);
+    //printf("El mozo ha devuelto un %d", resultado);
 
     if(sig == 10){ //si faltaban ingredientes
       if(resultado == 0){
@@ -249,9 +246,9 @@ void funcionMozo(int sig){
 
   int num = rand()%2;
   if(num==1){
-      printf("\t\t- El mozo ha encotrado lo que estaba buscando\n");
+      printf("\t\t- \x1b[32mEl mozo ha encotrado lo que estaba buscando \x1b[0m\n");
   }else{
-      printf("\t\t- El mozo no ha encotrado lo que estaba buscando\n");
+      printf("\t\t- \x1b[31mEl mozo no ha encotrado lo que estaba buscando \x1b[0m\n");
   }
   exit(num); //LE MANDO UN NUM ALEATORIO ENTRE 0 Y 1
 }
